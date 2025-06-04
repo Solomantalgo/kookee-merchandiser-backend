@@ -1,7 +1,7 @@
 package com.kookee.merchandiser_backend;
 
 import com.kookee.merchandiser_backend.util.GoogleSheetsWriter;
-import com.kookee.merchandiser_backend.Item; // <-- Add this import
+import com.kookee.merchandiser_backend.Item;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,7 +11,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/reports")
-@CrossOrigin(origins = "https://kookee-merchandiser-app.netlify.app")
+@CrossOrigin(origins = "https://stellular-beignet-f4ea84.netlify.app")
 public class ReportController {
 
     private final ReportRepository reportRepository;

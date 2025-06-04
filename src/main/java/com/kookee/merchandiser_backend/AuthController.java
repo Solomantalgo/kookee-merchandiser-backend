@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "https://kookee-merchandiser-app.netlify.app")
+@CrossOrigin(origins = "https://stellular-beignet-f4ea84.netlify.app")
 public class AuthController {
 
     @Autowired
