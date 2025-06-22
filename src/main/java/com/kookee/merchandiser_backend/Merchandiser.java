@@ -5,14 +5,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "merchandiser") // <-- updated table name
+@Table(name = "merchandiserkookee") // this MUST match your table name in DB
 public class Merchandiser {
-    
+
     @Id
     private String username;
+
     private String password;
 
-    // Getters and Setters
+    public Merchandiser() {}
+
     public String getUsername() {
         return username;
     }

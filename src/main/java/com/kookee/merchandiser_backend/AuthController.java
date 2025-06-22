@@ -2,23 +2,31 @@ package com.kookee.merchandiser_backend;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "https://stellular-beignet-f4ea84.netlify.app")
+@CrossOrigin(origins = {
+    "https://kookee-merchandiser-app.netlify.app", // production frontend
+    "http://localhost:3000"                         // local dev frontend
+})
 public class AuthController {
 
     @Autowired
     private MerchandiserRepository merchRepo;
 
     @PostMapping("/login")
-    public ResponseEntity<Merchandiser> login(@RequestBody Merchandiser request) {
+    public boolean login(@RequestBody Merchandiser request) {
+        System.out.println("Username: " + request.getUsername());
+        System.out.println("Password: " + request.getPassword());
+
         Merchandiser merch = merchRepo.findByUsernameAndPassword(request.getUsername(), request.getPassword());
+
         if (merch != null) {
-            return ResponseEntity.ok(merch);
+            System.out.println("✅ Found match in DB");
+            return true;
         } else {
-            return ResponseEntity.status(401).build();
+            System.out.println("❌ No match in DB");
+            return false;
         }
     }
 }
