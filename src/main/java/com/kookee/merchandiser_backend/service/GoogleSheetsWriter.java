@@ -1,5 +1,8 @@
 package com.kookee.merchandiser_backend.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -10,12 +13,21 @@ import java.util.*;
 @Service
 public class GoogleSheetsWriter {
 
+    private static final Logger logger = LoggerFactory.getLogger(GoogleSheetsWriter.class);
+
+    @Value("${sheetapi.url}")
+    private String sheetApiUrl;
+
     public void appendReport(String merchandiser, String outlet, String date, Map<String, Integer> itemsMap) {
+        if (itemsMap == null || itemsMap.isEmpty()) {
+            logger.warn("Items map is empty or null. Skipping Google Sheets sync.");
+            return;
+        }
+
         try {
             RestTemplate restTemplate = new RestTemplate();
-            URL url = new URL("https://sheet-api-production.up.railway.app/report");
+            URL url = new URL(sheetApiUrl);
 
-            // ✅ Convert Map to List of { name, qty }
             List<Map<String, Object>> itemsList = new ArrayList<>();
             for (Map.Entry<String, Integer> entry : itemsMap.entrySet()) {
                 Map<String, Object> itemObj = new HashMap<>();
@@ -24,24 +36,22 @@ public class GoogleSheetsWriter {
                 itemsList.add(itemObj);
             }
 
-            // ✅ Build Payload
             Map<String, Object> payload = new HashMap<>();
             payload.put("merchandiser", merchandiser);
             payload.put("outlet", outlet);
             payload.put("date", date);
-            payload.put("items", itemsList); // ✅ must be list, not map
+            payload.put("items", itemsList);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
             HttpEntity<Map<String, Object>> request = new HttpEntity<>(payload, headers);
 
-            // ✅ Send POST request
             ResponseEntity<String> response = restTemplate.postForEntity(url.toString(), request, String.class);
-            System.out.println("✅ Google Sheets response: " + response.getBody());
+            logger.info("Google Sheets API response: status={}, body={}", response.getStatusCode(), response.getBody());
 
         } catch (Exception e) {
-            System.err.println("❌ Failed to sync with Google Sheets: " + e.getMessage());
+            logger.error("Failed to sync with Google Sheets: {}", e.getMessage(), e);
         }
     }
 }
